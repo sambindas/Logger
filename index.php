@@ -413,8 +413,8 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
         var filter_status = $('#filter_status').val();
         var filter_assign = $('#filter_assign').val();
         var search_table = $('#search_table').val();
-        var datetimepicker1 = '';
-        var datetimepicker2 = '';
+        var datetimepicker1 = $('#datetimepicker1').val();
+        var datetimepicker2 = $('#datetimepicker2').val();
         var logger = $('#logger').val();
         var view = $('#view').val();
         
