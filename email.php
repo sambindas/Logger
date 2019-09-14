@@ -18,8 +18,9 @@ if (isset($_POST['submit_edt'])) {
 
     $email = $_POST['email'];
     $id = $_POST['id'];
+    $type = $_POST['type'];
 
-    $query = mysqli_query($conn, "UPDATE email_activity set email = '$email' where id = '$id'");
+    $query = mysqli_query($conn, "UPDATE email_activity set email = '$email', type = '$type' where id = '$id'");
     
     $_SESSION['msg'] = '<span class="alert alert-success">Email Edited Successfully.</span>';
     header("Location: $url ");
@@ -29,8 +30,9 @@ if (isset($_POST['form_submit'])) {
 
     $email = $_POST['email'];
     $id = $_POST['id'];
+    $type = $_POST['type'];
 
-    $query = mysqli_query($conn, "INSERT into email_activity (email) values ('$email')");
+    $query = mysqli_query($conn, "INSERT into email_activity (email, 'type') values ('$email', '$type')");
     
     $_SESSION['msg'] = '<span class="alert alert-success">Email Added Successfully.</span>';
     header("Location: $url ");
@@ -154,6 +156,7 @@ while ($toggles = mysqli_fetch_array($toggleq)) {
                                             <thead class="text-capitalize">
                                                 <tr>
                                                     <th>Email</th>
+                                                    <th>Type</th>
                                                     <th>Action</th>
                                                     <th></th>
                                                 </tr>
@@ -167,6 +170,7 @@ while ($toggles = mysqli_fetch_array($toggleq)) {
                                                 ?>
                                                 <tr>
                                                     <td><?php echo $li_row['email'] ; ?></td>
+                                                    <td><?php echo $li_row['type'] ; ?></td>
                                                     <td><div class="dropdown">
                                                             <button class="btn btn-xs btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             Action
@@ -201,6 +205,13 @@ while ($toggles = mysqli_fetch_array($toggleq)) {
                                                                                 <div class="form-gp">
                                                                                     <input type="text" name="email" placeholder="State Name" value="<?php echo $li_row['email']; ?>" required>
                                                                                 </div>
+                                                                                <label for="exampleInputName1"> Send Emails For</label>
+                                                                                <select name="type" class="custom-select border-0 pr-3" required>
+                                                                                    <option value="" selected="">Select One</option>
+                                                                                    <option value="Both">Both</option>
+                                                                                    <option value="Issues">Management Issues</option>
+                                                                                    <option value="Activity">Incomplete Activity</option>
+                                                                                </select>
                                                                                 <input type="hidden" name="id" value="<?php echo $li_row['id']; ?>">
                                                                                 <input type="hidden" name="url" value="<?php echo $url; ?>"><br>
                                                                                 <div class="submit-btn-area">
@@ -316,6 +327,13 @@ while ($toggles = mysqli_fetch_array($toggleq)) {
                                                             <i class="ti-user"></i><br>
                                                             <div id="errfn"></div>
                                                         </div>
+                                                        <label for="exampleInputName1"> Send Emails For</label>
+                                                        <select name="type" class="custom-select border-0 pr-3" required>
+                                                            <option value="" selected="">Select One</option>
+                                                            <option value="Both">Both</option>
+                                                            <option value="Issues">Management Issues</option>
+                                                            <option value="Activity">Incomplete Activity</option>
+                                                        </select>
                                                         <div class="submit-btn-area">
                                                             <input class="btn btn-primary" name="form_submit" type="submit" value="Submit">
                                                         </div>
