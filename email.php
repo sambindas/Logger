@@ -32,7 +32,7 @@ if (isset($_POST['form_submit'])) {
     $id = $_POST['id'];
     $type = $_POST['type'];
 
-    $query = mysqli_query($conn, "INSERT into email_activity (email, 'type') values ('$email', '$type')");
+    $query = mysqli_query($conn, "INSERT into email_activity (email, send_email, type) values ('$email', 1, '$type')");
     
     $_SESSION['msg'] = '<span class="alert alert-success">Email Added Successfully.</span>';
     header("Location: $url ");
