@@ -38,7 +38,7 @@ while ($email = mysqli_fetch_array($email_activity)) {
 }
 
 // print_r($send_email);
-$mess2 = 'Hello, <br>
+$mess2 = 'Hello, <br><br>
 These are the Issues for Management Attention for the previous week. ';
 $attn = mysqli_query($conn, "SELECT activity.issues, activity.user_id, user.user_name, activity.facility from activity inner join user on activity.user_id = user.user_id where activity.issues IS NOT NULL and activity_date between '$start_week' and '$end_week' group by activity.issues");
 while ($attention = mysqli_fetch_array($attn)) {

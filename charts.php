@@ -21,6 +21,8 @@ $time_averag = "SELECT issue_date, resolution_date from issue where issue_type =
 
 if ($from != '' and $to != '') {
     $time_averag .= "and fissue_date between '$from' and '$to'";
+} else {
+    $time_averag .= "and issue_id > 508";
 }
 $time_average = mysqli_query($conn, $time_averag);
 
@@ -50,6 +52,8 @@ $time_averagi = "SELECT issue_date, resolution_date from issue where issue_type 
 
 if ($from != '' and $to != '') {
     $time_averagi .= "and fissue_date between '$from' and '$to'";
+} else {
+    $time_averagi .= "and issue_id > 508";
 }
 $time_averagei = mysqli_query($conn, $time_averagi);
 
@@ -314,6 +318,7 @@ while ($row = mysqli_fetch_array($result)) {
                                             </thead>
                                             <tbody>
                                             <?php
+                                            $sqlsum = $sum0 = $sum1 = $sum2 = $sum3 = $sum4 = $sum5 = $sum6 = $sum7 = $sum8 = $sum9 = 0;
                                             foreach ($user as $uid) {
                                                 $sql = "SELECT count(*) as incident_count, user.user_name, issue.support_officer from issue inner join user on issue.support_officer = user.user_id where support_officer = '$uid'"; 
                                                 if ($from != '' and $to != '') {
@@ -370,11 +375,20 @@ while ($row = mysqli_fetch_array($result)) {
                                                 $statu8 = mysqli_fetch_array(mysqli_query($conn, $status8));
                                                 $statu9 = mysqli_fetch_array(mysqli_query($conn, $status9));
                                                 
-                                                $open = implode(',', $statu0['issue_id']);
-                                                $dbut = implode(',', $statu1['issue_id']);
+                                                $sum0 += $statu0['status_count'];
+                                                $sum1 += $statu1['status_count'];
+                                                $sum2 += $statu2['status_count'];
+                                                $sum3 += $statu3['status_count'];
+                                                $sum4 += $statu4['status_count'];
+                                                $sum5 += $statu5['status_count'];
+                                                $sum6 += $statu6['status_count'];
+                                                $sum7 += $statu7['status_count'];
+                                                $sum8 += $statu8['status_count'];
+                                                $sum9 += $statu9['status_count'];
 
                                                 $run = mysqli_query($conn, $sql);
                                                 while ($runn = mysqli_fetch_array($run)) {
+                                                    $sqlsum += $runn['incident_count'];
                                                     if ($from != '' and $to != '') {
                                                         echo '  <tr>
                                                                 <th scope="row">'.$runn['user_name'].'</th>
@@ -403,6 +417,17 @@ while ($row = mysqli_fetch_array($result)) {
                                                 }
                                             }
                                             ?>
+                                            <tr class="bg-info">
+                                                <th scope="row">Summary</th>
+                                                <td><?php echo $sqlsum ?></td>
+                                                <td><?php echo $sum0 ?></td>
+                                                <td><?php echo $sum2 ?></td>
+                                                <td><?php echo $sum5 ?></td>
+                                                <td><?php echo $sum4 ?></td>
+                                                <td><?php echo $sum9 ?></td>
+                                                <td><?php echo $sum1 ?></td>
+                                                <td><?php echo $sum3 ?></td>
+                                            </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -437,8 +462,8 @@ while ($row = mysqli_fetch_array($result)) {
                                             </thead>
                                             <tbody>
                                             <?php
+                                            $devsum = $dev0 = $dev1 = $dev2 = $dev3 = $dev4 = $dev5 = $dev6 = $dev7 = $dev8 = $dev9 = 0;
                                             foreach ($developer_id as $dev_id) {
-                                                
                                                 $sql_dev = "SELECT count(*) as incident_count from issue where user = '$dev_id'"; 
                                                 if ($from != '' and $to != '') {
                                                     $sql_dev .= " and fissue_date between '$from' and '$to'";
@@ -495,8 +520,20 @@ while ($row = mysqli_fetch_array($result)) {
                                                 $statu_dev8 = mysqli_fetch_array(mysqli_query($conn, $status_dev8));
                                                 $statu_dev9 = mysqli_fetch_array(mysqli_query($conn, $status_dev9));
 
+                                                $dev0 += $statu_dev8['status_count'];
+                                                $dev1 += $statu_dev1['status_count'];
+                                                $dev2 += $statu_dev2['status_count'];
+                                                $dev3 += $statu_dev3['status_count'];
+                                                $dev4 += $statu_dev4['status_count'];
+                                                $dev5 += $statu_dev5['status_count'];
+                                                $dev6 += $statu_dev6['status_count'];
+                                                $dev7 += $statu_dev7['status_count'];
+                                                $dev8 += $statu_dev8['status_count'];
+                                                $dev9 += $statu_dev9['status_count'];
+
                                                 $run = mysqli_query($conn, $sql_dev);
                                                 while ($runn = mysqli_fetch_array($run)) {
+                                                    $devsum += $runn['incident_count'];
                                                     if ($from != '' and $to != '') {
                                                     echo '  <tr>
                                                                 <th scope="row">'.$dev_id.'</th>
@@ -525,6 +562,17 @@ while ($row = mysqli_fetch_array($result)) {
                                                 }
                                             }
                                             ?>
+                                            <tr class="bg-warning">
+                                                <th scope="row">Summary</th>
+                                                <td><?php echo $devsum ?></td>
+                                                <td><?php echo $dev0 ?></td>
+                                                <td><?php echo $dev2 ?></td>
+                                                <td><?php echo $dev5 ?></td>
+                                                <td><?php echo $dev4 ?></td>
+                                                <td><?php echo $dev9 ?></td>
+                                                <td><?php echo $dev1 ?></td>
+                                                <td><?php echo $dev3 ?></td>
+                                            </tr>
                                             </tbody>
                                         </table>
                                     </div>
