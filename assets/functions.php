@@ -1,9 +1,8 @@
 <?php
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exceptoin;
-$conn = mysqli_connect("localhost", "root", "", "laundry");
+use PHPMailer\PHPMailer\Exception;
+$conn = mysqli_connect("localhost", "root", "heliport1", "incident_log");
 error_reporting(0);
-
 function checkUserSession() {
     if (!isset($_SESSION['logged_user'])) {
         header("Location: login.php");
@@ -12,7 +11,6 @@ function checkUserSession() {
         $name = $_SESSION['name'];
     }
 }
-
 $uid = $_SESSION['id'];
 $s = mysqli_query($conn, "SELECT * from user where user_id='$uid'");
 while ($ss = mysqli_fetch_array($s)) {
@@ -37,7 +35,7 @@ function sendMail($email, $rrr, $subject, $message, $msg, $url) {
 
       try {
           //Server settings
-          $mail->SMTPDebug = 0;                                       // Enable verbose debug output
+          $mail->SMTPDebug = 2;                                       // Enable verbose debug output
           $mail->isSMTP();                                            // Set mailer to use SMTP
           $mail->Host       = 'smtp.gmail.com;';  // Specify main and backup SMTP servers
           $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
@@ -57,55 +55,14 @@ function sendMail($email, $rrr, $subject, $message, $msg, $url) {
           $mail->Body    = $message;
           
 
-          if (!$mail->send()) {
-                $result = 0;
-            } else {
-                $result = 1;
-            }
-            echo $result;
+          $mail->send();
+          $_SESSION['msg'] = $msg;
+          header("Location: $url");
           exit();
       } catch (Exception $e) {
           echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
       }
 }
-
-function sendMails($email, $rrr, $subject, $message, $msg, $url) {
-    // Load Composer's autoloader
-        require 'vendor/autoload.php';
-  
-        // Instantiation and passing `true` enables exceptions
-        $mail = new PHPMailer(true);
-  
-        try {
-            //Server settings
-            $mail->SMTPDebug = 2;                                       // Enable verbose debug output
-            $mail->isSMTP();                                            // Set mailer to use SMTP
-            $mail->Host       = 'smtp.gmail.com;';  // Specify main and backup SMTP servers
-            $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
-            $mail->Username   = 'incidentlog00@gmail.com';              // SMTP username
-            $mail->Password   = 'wallace@femi';                         // SMTP password
-            $mail->SMTPSecure = 'tls';                                  // Enable TLS encryption, `ssl` also accepted
-            $mail->Port       = 587;                                    // TCP port to connect to
-  
-            //Recipients
-            $mail->setFrom('incidentlog00@gmail.com', 'Incident Log');
-            $mail->addAddress($email, $rrr);     // Add a recipient
-            $mail->addReplyTo('incidentlog00@gmail.com', 'Incident Log');
-  
-            // Content
-            $mail->isHTML(true);                                  // Set email format to HTML
-            $mail->Subject = $subject;
-            $mail->Body    = $message;
-            
-  
-            $mail->send();
-            $_SESSION['msg'] = $msg;
-            return 1;
-            exit();
-        } catch (Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-        }
-  }
 
 function sendMail2($email, $rrr, $subject, $message, $msg, $url, $email2) {
   // Load Composer's autoloader
@@ -116,7 +73,7 @@ function sendMail2($email, $rrr, $subject, $message, $msg, $url, $email2) {
 
       try {
           //Server settings
-          $mail->SMTPDebug = 0;                                       // Enable verbose debug output
+          $mail->SMTPDebug = 2;                                       // Enable verbose debug output
           $mail->isSMTP();                                            // Set mailer to use SMTP
           $mail->Host       = 'smtp.gmail.com;';  // Specify main and backup SMTP servers
           $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
@@ -137,12 +94,9 @@ function sendMail2($email, $rrr, $subject, $message, $msg, $url, $email2) {
           $mail->Body    = $message;
           
 
-          if (!$mail->send()) {
-              $result = 0;
-          } else {
-              $result = 1;
-          }
-          echo $result;
+          $mail->send();
+          $_SESSION['msg'] = $msg;
+          header("Location: $url");
           exit();
       } catch (Exception $e) {
           echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
@@ -190,7 +144,7 @@ function secondsToTime($inputSeconds) {
 function make_query($conn, $issue_id)
 {
 
-$conn = mysqli_connect("localhost", "root", "", "laundry");
+$conn = mysqli_connect("localhost", "root", "heliport1", "incident_log");
 $query = "SELECT * FROM media where issue_id = '$issue_id'";
 $result = mysqli_query($conn, $query);
  return $result;

@@ -53,15 +53,7 @@ if (isset($_POST['submit_issue'])) {
                 <blockquote><b>Facility</b>: '.$facility.'<br><b>Details</b>: '.$issue.'</blockquote>
                 <br>
                 Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
-                sendMails($email, $rrr, $subject, $message, $msg, $url);
-                if ($result == 1) {
-                    $_SESSION['msg'] = '<span class="alert alert-success">Incident Submitted Successfully.</span>';
-                    header("Location: index.php ");
-                    exit();
-                } else {
-                    $_SESSION['msg'] = '<span class="alert alert-success">Incident Submitted Successfully.</span>';
-                    header("Location: index.php ");
-                }
+                sendMail($email, $rrr, $subject, $message, $msg, $url);
         }
 
         $_SESSION['msg'] = '<span class="alert alert-success">Incident Submitted Successfully.</span>';
@@ -98,12 +90,9 @@ if (isset($_POST['edit_issue'])) {
     }
 
 if (isset($_POST['submit_re'])) {
-
-    parse_str($_POST['dataset'], $here);
-
-    $issue_id = $here['issue_id'];
-    $reassign = $here['reassign'];
-    $url = $here['url'];
+    $issue_id = $_POST['issue_id'];
+    $reassign = $_POST['reassign'];
+    $url = $_POST['url'];
     $n = $_SESSION['name'];
     $date = date('d-m-Y H:i:s');
     $so = $_SESSION['id'];
@@ -119,20 +108,17 @@ if (isset($_POST['submit_re'])) {
         }
         
         if ($log) {
-        if (isset($here['smail'])) {
+        if (isset($_POST['smail'])) {
             $rrr = strtok($reassign, " ");
                 $msg = '<span class="alert alert-success">Incident Re-assigned Successfully and mail sent to <span style="text-transform: lowercase;">'.$email.'</span>.</span>';
                 $subject = 'An Incident Has Been Re-assigned To You';
                 $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$issue_id.' has been re-assigned to you by '.$son.'. Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
                 
                 sendMail($email, $rrr, $subject, $message, $msg, $url);
-                if ($result == 1) {
-                    echo 1;
-                } else {
-                    echo 0;
-                }
+
             } 
-        echo 2;
+        $_SESSION['msg'] = '<span class="alert alert-success">Incident Reassigned Successfully.</span>';
+        header("Location: index.php ");
         }
 
 }
@@ -196,7 +182,7 @@ if (isset($_POST['submit_media'])) {
                 $subject = 'New Media Uploaded';
                 $message = 'Hello All, <br> A Media has just been uploaded to Incident S/N '.$issue_id.' by '.$son.'. Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check.<br> Best Regards.';
                 
-                sendMails2($email, $rrr, $subject, $message, $msg, $url, $email2);
+                sendMail2($email, $rrr, $subject, $message, $msg, $url, $email2);
         }      
     }
 
@@ -205,14 +191,12 @@ if (isset($_POST['submit_media'])) {
 
 if (isset($_POST['submit_done'])) {
 
-    parse_str($_POST['dataset'], $here);
-
     $so = $_SESSION['id'];
     $son = $_SESSION['name'];
-    $issue_id = $here['issue_id'];
-    $comments = mysqli_real_escape_string($conn, $here['dcomments']);
+    $issue_id = $_POST['issue_id'];
+    $comments = mysqli_real_escape_string($conn, $_POST['dcomments']);
     $date = date('d-m-Y H:i:s');
-    $url = $here['url'];
+    $url = $_POST['url'];
 
     $query = mysqli_query($conn, "UPDATE issue set status = 1, resolution_date = '$date', resolved_by = '$so' where issue_id = '$issue_id'");
     if ($query) {
@@ -237,25 +221,19 @@ if (isset($_POST['submit_done'])) {
 
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 1) ");
     sendMail($email, $rrr, $subject, $message, $msg, $url);
-    if ($result == 1) {
-        echo 1;
     } else {
-        echo 0;
-    }
-    } else {
-    echo 3;
+    sendMail($email, $rrr, $subject, $message, $msg, $url);
+
 }
 }
 
 if (isset($_POST['submit_app'])) {
 
-    parse_str($_POST['dataset'], $here);
-
     $so = $_SESSION['id'];
-    $issue_id = $here['issue_id'];
+    $issue_id = $_POST['issue_id'];
     $date = date('d-m-Y H:i:s');
-    $url = $here['url'];
-    $comments = $here['comments'];
+    $url = $_POST['url'];
+    $comments = $_POST['comments'];
 
 
     $query = mysqli_query($conn, "UPDATE issue set status = 0 where issue_id = '$issue_id'");
@@ -266,22 +244,22 @@ if (isset($_POST['submit_app'])) {
 
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 8) ");
 
-    echo 1;
+    $_SESSION['msg'] = '<span class="alert alert-success">Incident Marked Successfully.</span>';
+    header("Location: $url ");
 } else {
-    echo 2;
+     $_SESSION['msg'] = '<span class="alert alert-success">Incident Marked Successfully.</span>';
+    header("Location: $url ");
 }
 
 }
 
 if (isset($_POST['submit_dapp'])) {
 
-    parse_str($_POST['dataset'], $here);
-
     $so = $_SESSION['id'];
-    $issue_id = $here['issue_id'];
+    $issue_id = $_POST['issue_id'];
     $date = date('d-m-Y H:i:s');
-    $url = $here['url'];
-    $comments = $here['comments'];
+    $url = $_POST['url'];
+    $comments = $_POST['comments'];
 
 
     $query = mysqli_query($conn, "UPDATE issue set status = 7 where issue_id = '$issue_id'");
@@ -292,9 +270,11 @@ if (isset($_POST['submit_dapp'])) {
 
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 7) ");
 
-    echo 1;
+    $_SESSION['msg'] = '<span class="alert alert-success">Incident Marked Successfully.</span>';
+    header("Location: $url ");
 } else {
-    echo 2;
+     $_SESSION['msg'] = '<span class="alert alert-success">Incident Marked Successfully.</span>';
+    header("Location: $url ");
 }
 
 }
@@ -389,13 +369,11 @@ if (isset($_POST['submit_icm'])) {
 
 if (isset($_POST['submit_nai'])) {
 
-    parse_str($_POST['dataset'], $here);
-
     $so = $_SESSION['id'];
-    $issue_id = $here['issue_id'];
-    $comments = mysqli_real_escape_string($conn, $here['ncomments']);
+    $issue_id = $_POST['issue_id'];
+    $comments = mysqli_real_escape_string($conn, $_POST['ncomments']);
     $date = date('d-m-Y H:i:s');
-    $url = $here['url'];
+    $url = $_POST['url'];
 
     $query = mysqli_query($conn, "UPDATE issue set resolution_date = '$date', status = 2 where issue_id = '$issue_id'");
     if ($query) {
@@ -405,26 +383,25 @@ if (isset($_POST['submit_nai'])) {
 
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 2) ");
 
-    echo 1;
+    $_SESSION['msg'] = '<span class="alert alert-success">Incident Marked Successfully.</span>';
+    header("Location: $url ");
 } else {
-    echo 2;
+     $_SESSION['msg'] = '<span class="alert alert-success">Incident Marked Successfully.</span>';
+    header("Location: $url ");
 }
 }
 
 if (isset($_POST['submit_comm'])) {
 
-    parse_str($_POST['dataset'], $here);
-
     $so = $_SESSION['id'];
     $son = $_SESSION['name'];
-    $issue_id = $here['issue_id'];
-    $comments = mysqli_real_escape_string($conn, $here['comments']);
-    $comments2 = $here['comments'];
+    $issue_id = $_POST['issue_id'];
+    $comments = mysqli_real_escape_string($conn, $_POST['comments']);
+    $comments2 = $_POST['comments'];
     $date = date('d-m-Y H:i:s');
-    $url = $here['url'];    
+    $url = $_POST['url'];
 
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 20) ");
-    
     if($query2){
             $log = mysqli_query($conn, "INSERT into movement (issue_id, done_by, done_at, movement) values ('$issue_id', '$so', '$date', 'Comments Were Added')");
             $sss = mysqli_query($conn, "SELECT * from issue where issue_id = '$issue_id'");
@@ -453,31 +430,20 @@ if (isset($_POST['submit_comm'])) {
                 if ($email == $_SESSION['email']) {
                     $msg = '<span class="alert alert-success">Comments Added and mail sent to <span style="text-transform: lowercase;">'.$email2.'.</span></span>';
                     sendMail($email2, $rrr, $subject, $message, $msg, $url);
-                    if ($result == 1) {
-                        echo 1;
-                    } else {
-                        echo 0;
-                    }
-                } else {
+                }else {
+                    $msg = '<span class="alert alert-success">Comments Added and mail sent to <span style="text-transform: lowercase;">'.$email.' and '.$email2.'.</span></span>';
                     sendMail2($email, $rrr, $subject, $message, $msg, $url, $email2);
-                    if ($result == 1) {
-                        echo 1;
-                    } else {
-                        echo 0;
-                    }
                 }
         }
 }
 
 if (isset($_POST['submit_noc'])) {
 
-    parse_str($_POST['dataset'], $here);
-
     $so = $_SESSION['id'];
-    $issue_id = $here['issue_id'];
-    $comments = mysqli_real_escape_string($conn, $here['dcomments']);
+    $issue_id = $_POST['issue_id'];
+    $comments = mysqli_real_escape_string($conn, $_POST['dcomments']);
     $date = date('d-m-Y H:i:s');
-    $url = $here['url'];
+    $url = $_POST['url'];
 
     $query = mysqli_query($conn, "UPDATE issue set status = 5 where issue_id = '$issue_id'");
     if ($query) {
@@ -487,21 +453,21 @@ if (isset($_POST['submit_noc'])) {
 
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 5) ");
 
-    echo 1;
+    $_SESSION['msg'] = '<span class="alert alert-success">Incident Marked Successfully.</span>';
+    header("Location: $url ");
 } else {
-    echo 2;
+     $_SESSION['msg'] = '<span class="alert alert-success">Incident Marked Successfully.</span>';
+    header("Location: $url ");
 }
 }
 
 if (isset($_POST['submit_req'])) {
 
-    parse_str($_POST['dataset'], $here);
-
     $so = $_SESSION['id'];
-    $issue_id = $here['issue_id'];
-    $comments = mysqli_real_escape_string($conn, $here['ncomments']);
+    $issue_id = $_POST['issue_id'];
+    $comments = mysqli_real_escape_string($conn, $_POST['ncomments']);
     $date = date('d-m-Y H:i:s');
-    $url = $here['url'];
+    $url = $_POST['url'];
 
     $query = mysqli_query($conn, "UPDATE issue set status = 6 where issue_id = '$issue_id'");
     if ($query) {
@@ -511,21 +477,21 @@ if (isset($_POST['submit_req'])) {
 
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 6) ");
 
-    echo 1;
+    $_SESSION['msg'] = '<span class="alert alert-success">Incident Marked Successfully.</span>';
+    header("Location: $url ");
 } else {
-    echo 2;
+     $_SESSION['msg'] = '<span class="alert alert-success">Incident Marked Successfully.</span>';
+    header("Location: $url ");
 }
 }
 
 if (isset($_POST['submit_reo'])) {
 
-    parse_str($_POST['dataset'], $here);
-
     $so = $_SESSION['id'];
-    $issue_id = $here['issue_id'];
-    $comments = mysqli_real_escape_string($conn, $here['rcomments']);
+    $issue_id = $_POST['issue_id'];
+    $comments = mysqli_real_escape_string($conn, $_POST['rcomments']);
     $date = date('d-m-Y H:i:s');
-    $url = $here['url'];
+    $url = $_POST['url'];
 
     $query = mysqli_query($conn, "UPDATE issue set status = 8 where issue_id = '$issue_id'");
     if ($query) {
@@ -535,9 +501,11 @@ if (isset($_POST['submit_reo'])) {
 
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 0) ");
 
-    echo 1;
+    $_SESSION['msg'] = '<span class="alert alert-success">Incident Reopened Successfully.</span>';
+    header("Location: $url ");
 } else {
-    echo 2;
+    $_SESSION['msg'] = '<span class="alert alert-success">Incident Reopened Successfully.</span>';
+    header("Location: $url ");
 }
 }
 
@@ -599,7 +567,7 @@ if (isset($_POST['submit_media2'])) {
                 $subject = 'New Media Uploaded';
                 $message = 'Hello All, <br> A Media has just been uploaded to Incident S/N '.$issue_id.' by '.$son.'. Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check.<br> Best Regards.';
                 
-                sendMails2($email, $rrr, $subject, $message, $msg, $url, $email2);
+                sendMail2($email, $rrr, $subject, $message, $msg, $url, $email2);
         }      
         }      
     }

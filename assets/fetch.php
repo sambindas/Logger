@@ -169,14 +169,13 @@ $reqa = "<div class='modal fade' id='req".$row['issue_id']."'>
                     </div>
                     <div class='modal-body'>
                         <p>Add Additional Comments If Available</p>
-                        <form id='submit_req".$row['issue_id']."' method='post' action='javascript:;'>
+                        <form method='post' action='processing.php'>
                             <div class='md-form'>
                                 <textarea type='text' id='form79textarea' class='md-textarea form-control' cols='40' name='ncomments'></textarea>
                             </div>
                             <input type='hidden' name='issue_id' value='".$row['issue_id']."'><br>
                             <input type='hidden' name='url' value='".$url."'><br>
-                            <br><button onClick='dope5(".$row['issue_id'].")' id='submit_reqd' type='submit' class='btn btn-primary' name='submit_req'>Mark</button>
-                            <p id='submitbtnreq'></p>
+                            <br><button type='submit' class='btn btn-primary' name='submit_req'>Mark</button>
                         </form><br>
                     </div>
                 </div>
@@ -265,14 +264,13 @@ $acc = "<div class='modal fade' id='comm".$row['issue_id']."'>
                     </div>
                     <div class='modal-body'>
                         <p>Add Comments to this Incident</p>
-                        <form id='submit_comm".$row['issue_id']."' method='post' action='javascript:;'>
+                        <form method='post' action='processing.php'>
                         <div class='md-form'>    
                             <textarea type='text' id='form79textarea' class='md-textarea form-control' cols='40' name='comments' required></textarea>
                         </div>
-                            <input type='hidden' id='".$row['issue_id']."' name='issue_id' value='".$row['issue_id']."'><br>
+                            <input type='hidden' name='issue_id' value='".$row['issue_id']."'><br>
                             <input type='hidden' name='url' value='".$url."'><br>
-                            <br><button type='submit' onClick='dope(".$row['issue_id'].")' id='submit_btnc' class='btn btn-primary' name='submit_comm'>Submit</button>
-                            <p id='submitbtnid'></p>
+                            <br><button type='submit' class='btn btn-primary' name='submit_comm'>Submit</button>
                         </form><br>
                     </div>
                 </div>
@@ -288,7 +286,7 @@ $reassign = "<div class='modal fade' id='re".$row['issue_id']."'>
                         <div class='modal-body'>
                             <p>Currently assigned to</p>
                             ".$user."<br><br>
-                            <form method='post' id='submit_re".$row['issue_id']."' action='javascript:;'>
+                            <form method='post' action='processing.php'>
                                 <select name='reassign' required>
                                     <option value=''>Select New User</option>
                                     ".$reas."
@@ -297,8 +295,7 @@ $reassign = "<div class='modal fade' id='re".$row['issue_id']."'>
                                 Send Mail Notification<Br>
                                 <input type='hidden' name='issue_id' value='".$row['issue_id']."'><br>
                                 <input type='hidden' name='url' value='".$url."'><br>
-                                <br><button type='submit' onClick='dope7(".$row['issue_id'].")' id='submit_reb' class='btn btn-primary' name='submit_re'>Reassign</button>
-                                <p id='submitbtnre'></p>
+                                <br><button type='submit' class='btn btn-primary' name='submit_re'>Reassign</button>
                             </form><br>
                         </div>
                     </div>
@@ -325,14 +322,13 @@ $nai = "<div class='modal fade' id='nai".$row['issue_id']."'>
                         </div>
                         <div class='modal-body'>
                             <p>Add Additional Comments If Available</p>
-                            <form method='post' id='submit_nai".$row['issue_id']."' action='javascript:;'>
+                            <form method='post' action='processing.php'>
                             <div class='md-form'>    
                                 <textarea type='text' id='form79textarea' class='md-textarea form-control' cols='40' name='ncomments' required></textarea>
                             </div>
                                 <input type='hidden' name='issue_id' value='".$row['issue_id']."'><br>
                                 <input type='hidden' name='url' value='".$url."'><br>
-                                <br><button onClick='dope3(".$row['issue_id'].")' id='submit_naid' type='submit' class='btn btn-primary' name='submit_nai'>Mark as Not an Issue</button>
-                                <p id='submitnai'></p>
+                                <br><button type='submit' class='btn btn-primary' name='submit_nai'>Mark as Not an Issue</button>
                             </form><br>
                         </div>
                     </div>
@@ -347,14 +343,13 @@ $noc = "<div class='modal fade' id='noc".$row['issue_id']."'>
                         </div>
                         <div class='modal-body'>
                             <p>Add Additional Comments If Available</p>
-                            <form method='post' id='submit_noc".$row['issue_id']."' action='javascript:;'>
+                            <form method='post' action='processing.php'>
                             <div class='md-form'>    
                                 <textarea type='text' id='form79textarea' class='md-textarea form-control' cols='40' name='dcomments'></textarea>
                             </div>
                                 <input type='hidden' name='issue_id' value='".$row['issue_id']."'><br>
                                 <input type='hidden' name='url' value='".$url."'><br>
-                                <br><button onClick='dope4(".$row['issue_id'].")' id='submit_nocd' type='submit' class='btn btn-primary' name='submit_noc'>Mark as Not Clear</button>
-                                <p id='submitnoc'></p>
+                                <br><button type='submit' class='btn btn-primary' name='submit_noc'>Mark as Not Clear</button>
                             </form><br>
                         </div>
                     </div>
@@ -396,15 +391,14 @@ $reopen = "<div class='modal fade' id='reo".$row['issue_id']."'>
                         </div>
                         <div class='modal-body'>
                             <p>Add Additional Comments If Available</p>
-                            <form method='post' id='submit_reo".$row['issue_id']."' action='javascript:;'>
+                            <form method='post' action='processing.php'>
                             <div class='md-form'>    
                                 <textarea type='text' id='form79textarea' class='md-textarea form-control' cols='40' name='rcomments'></textarea>
                             </div>
                                 <input type='hidden' name='issue_id' value='".$row['issue_id']."'><br>
                                 <input type='hidden' name='url' value='".$url."'><br>
-                                <br><button type='submit' id='submit_reod' onClick='dope2(".$row['issue_id'].")' class='btn btn-primary' name='submit_reo'>Mark as Reopened</button>
-                                <p id='submitreo'></p>
-                                </form><br>
+                                <br><button type='submit' class='btn btn-primary' name='submit_reo'>Mark as Reopened</button>
+                            </form><br>
                         </div>
                     </div>
                 </div>
@@ -418,15 +412,12 @@ $approved = "<div class='modal fade' id='app".$row['issue_id']."'>
                         </div>
                         <div class='modal-body'>
                             <p>Add Additional Comments</p>
-                            <form method='post' id='submit_app".$row['issue_id']."' action='javascript:;'>
-                            <div class='md-form'>    
-                                <textarea cols='40' id='form79textarea' class='md-textarea form-control' name='comments'></textarea>
-                            </div>
+                            <form method='post' action='processing.php'>
+                                <textarea cols='40' name='comments'></textarea>
                                 <input type='hidden' name='issue_id' value='".$row['issue_id']."'><br>
                                 <input type='hidden' name='url' value='".$url."'><br>
-                                <br><button type='submit' class='btn btn-primary' id='submit_appd' onClick='dope6a(".$row['issue_id'].")' name='submit_app'>Approved</button>
-                                <button type='submit' id='submit_nappd' onClick='dope6b(".$row['issue_id'].")' class='btn btn-danger' name='submit_dapp'>Not Approved</button>
-                                <p id='submitbtnapp'></p>
+                                <br><button type='submit' class='btn btn-primary' name='submit_app'>Approved</button>
+                                <button type='submit' class='btn btn-danger' name='submit_dapp'>Not Approved</button>
                             </form><br>
                         </div>
                     </div>
@@ -507,15 +498,14 @@ $done = "<div class='modal fade' id='done".$row['issue_id']."'>
                         </div>
                         <div class='modal-body'>
                             <p>Add Additional Comments If Available</p>
-                            <form method='post' id='submit_done".$row['issue_id']."' action='javascript:;'>
+                            <form method='post' action='processing.php'>
                             <div class='md-form'>    
                                 <textarea type='text' id='form79textarea' class='md-textarea form-control' cols='40' name='dcomments'></textarea>
                             </div>
                                 <input type='hidden' name='issue_id' value='".$row['issue_id']."'><br>
                                 <input type='hidden' name='url' value='".$url."'><br>
-                                <br><button type='submit' id='submit_btnd' onClick='dope1(".$row['issue_id'].")' class='btn btn-primary' name='submit_done'>Mark as Done</button>
-                                <p id='submitdone'></p>
-                                </form><br>
+                                <br><button type='submit' class='btn btn-primary' name='submit_done'>Mark as Done</button>
+                            </form><br>
                         </div>
                     </div>
                 </div>
