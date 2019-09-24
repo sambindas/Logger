@@ -27,6 +27,10 @@ if (isset($_POST['submit_issue'])) {
     $post_type = $_POST['post_type'];
     $state_id = $_SESSION['state_id'];
 
+    $ful_fac = mysqli_query($conn, "SELECT * from facility where code = '$facility'");
+    while ($full_fac = mysqli_fetch_array($ful_fac)) {
+        $facc = $full_fac['name'];
+    }
         $insert = mysqli_query($conn, "INSERT INTO issue (state_id, facility, issue_type, issue_level, issue, issue_date, fissue_date, issue_client_reporter, affected_dept, support_officer, priority, status, month, issue_reported_on, user, type)
          VALUES ('$state_id', '$facility', '$type', '$il', '$issue', '$date', '$fdate', '$icr', '$ad', '$so', '$priority', 0, '$month', '$irod', '$user', '$post_type')");
         $last_id = mysqli_insert_id($conn);
@@ -50,12 +54,12 @@ if (isset($_POST['submit_issue'])) {
                 $subject = 'An Incident Has Been Assigned To You';
                 $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$last_id.' has been assigned to you by '.$son.'. 
                 <br>
-                <blockquote><b>Facility</b>: '.$facility.'<br><b>Details</b>: '.$issue.'</blockquote>
+                <blockquote><b>Facility</b>: '.$facc.'<br><b>Details</b>: '.$issue.'</blockquote>
                 <br>
                 Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
                 sendMails($email, $rrr, $subject, $message, $msg, $url);
                 if ($result == 1) {
-                    $_SESSION['msg'] = '<span class="alert alert-success">Incident Submitted Successfully.</span>';
+                    $_SESSION['msg'] = '<span class="alert alert-success">Incident Submitted Successfully and mail sent.</span>';
                     header("Location: index.php ");
                     exit();
                 } else {
@@ -196,7 +200,10 @@ if (isset($_POST['submit_media'])) {
                 $subject = 'New Media Uploaded';
                 $message = 'Hello All, <br> A Media has just been uploaded to Incident S/N '.$issue_id.' by '.$son.'. Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check.<br> Best Regards.';
                 
-                sendMails2($email, $rrr, $subject, $message, $msg, $url, $email2);
+                sendMails($email, $rrr, $subject, $message, $msg, $url, $email2);
+                if ($r == 1) {
+                    header('Location: index.php');
+                }
         }      
     }
 
@@ -230,21 +237,30 @@ if (isset($_POST['submit_done'])) {
     }
     $rrr = strtok($name, " ");
         $msg = '<span class="alert alert-success">Incident Marked Successfully.</span>';
-        $subject = 'Incident Marked As Done';
-        $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$issue_id.' which you submitted, has been has been marked as DONE by '.$son.'. Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
+        $subject = 'Incident Marked As Done';  
         
     if ($comments != "") {
-
-    $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 1) ");
-    sendMail($email, $rrr, $subject, $message, $msg, $url);
-    if ($result == 1) {
-        echo 1;
+        $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$issue_id.' which you submitted, has been has been marked as DONE by '.$son.'.
+        <br><br> <b>Comments</b>: '.$comments.'
+        <br><br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
+        $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 1) ");
+        sendMail($email, $rrr, $subject, $message, $msg, $url);
+        if ($result == 1) {
+            echo 1;
+        } else {
+            echo 0;
+        }
     } else {
-        echo 0;
+        $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$issue_id.' which you submitted, has been has been marked as DONE by '.$son.'.
+        <br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
+        $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 1) ");
+        sendMail($email, $rrr, $subject, $message, $msg, $url);
+        if ($result == 1) {
+            echo 1;
+        } else {
+            echo 0;
+        }
     }
-    } else {
-    echo 3;
-}
 }
 
 if (isset($_POST['submit_app'])) {
@@ -370,20 +386,34 @@ if (isset($_POST['submit_icm'])) {
     $comments = mysqli_real_escape_string($conn, $_POST['dcomments']);
     $date = date('d-m-Y H:i:s');
     $url = $_POST['url'];
+    $son = $_SESSION['name'];
+
+    $sss = mysqli_query($conn, "SELECT * from issue where issue_id = '$issue_id'");
+    while ($rrrr = mysqli_fetch_array($sss)) {
+        $us2 = $rrrr['resolved_by'];
+    }
+    // fetch assignee details
+    $u2 = mysqli_query($conn, "SELECT * from user where user_id = '$us2'");
+    while ($rr2 = mysqli_fetch_array($u2)) {
+        $email = $rr2['email'];
+        $name = $rr2['user_name'];
+    }
+    $rrr = strtok($name, " ");
 
     $query = mysqli_query($conn, "UPDATE issue set status = 4 where issue_id = '$issue_id'");
     if ($query) {
         $log = mysqli_query($conn, "INSERT into movement (issue_id, done_by, done_at, movement) values ('$issue_id', '$so', '$date', 'Incident was marked as incomplete.')");
     }
+    
+    $subject = 'Incident Marked As Incomplete'; 
     if ($comments != "") {
-
+    $msg = '<span class="alert alert-success">Incident Marked Successfully and mail sent.</span>';
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 4) ");
 
-    $_SESSION['msg'] = '<span class="alert alert-success">Incident Marked Successfully.</span>';
-    header("Location: $url ");
-} else {
-     $_SESSION['msg'] = '<span class="alert alert-success">Incident Marked Successfully.</span>';
-    header("Location: $url ");
+    $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$issue_id.' which you maeked as done, has been has been marked as INCOMPLETE by '.$son.'.
+    <br><br> <b>Comments</b>: '.$comments.'
+    <br><br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
+    sendMails($email, $rrr, $subject, $message, $msg, $url);
 }
 }
 
@@ -599,7 +629,9 @@ if (isset($_POST['submit_media2'])) {
                 $subject = 'New Media Uploaded';
                 $message = 'Hello All, <br> A Media has just been uploaded to Incident S/N '.$issue_id.' by '.$son.'. Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check.<br> Best Regards.';
                 
-                sendMails2($email, $rrr, $subject, $message, $msg, $url, $email2);
+                
+            sendMails($email, $rrr, $subject, $message, $msg, $url, $email2);
+            
         }      
         }      
     }

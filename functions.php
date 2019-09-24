@@ -78,7 +78,7 @@ function sendMails($email, $rrr, $subject, $message, $msg, $url) {
   
         try {
             //Server settings
-            $mail->SMTPDebug = 2;                                       // Enable verbose debug output
+            $mail->SMTPDebug = 0;                                       // Enable verbose debug output
             $mail->isSMTP();                                            // Set mailer to use SMTP
             $mail->Host       = 'smtp.gmail.com;';  // Specify main and backup SMTP servers
             $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
@@ -100,8 +100,7 @@ function sendMails($email, $rrr, $subject, $message, $msg, $url) {
   
             $mail->send();
             $_SESSION['msg'] = $msg;
-            return 1;
-            exit();
+            header('Location: '.$url);
         } catch (Exception $e) {
             echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
         }

@@ -105,7 +105,7 @@ if (empty($diff)) {
 
           // Content
           $mail->isHTML(true);                                  // Set email format to HTML
-          $mail->Subject = 'Incomplete Activity Log';
+          $mail->Subject = 'Incomplete Activity Log for week '.$start_week.' - '.$end_week.'';
           $mail->Body    = $mess;
           
 
