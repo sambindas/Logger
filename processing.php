@@ -240,7 +240,7 @@ if (isset($_POST['submit_done'])) {
         $subject = 'Incident Marked As Done';  
         
     if ($comments != "") {
-        $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$issue_id.' which you submitted, has been has been marked as DONE by '.$son.'.
+        $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$issue_id.' which you submitted, has been marked as DONE by '.$son.'.
         <br><br> <b>Comments</b>: '.$comments.'
         <br><br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
         $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 1) ");
@@ -251,9 +251,8 @@ if (isset($_POST['submit_done'])) {
             echo 0;
         }
     } else {
-        $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$issue_id.' which you submitted, has been has been marked as DONE by '.$son.'.
+        $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$issue_id.' which you submitted, has been marked as DONE by '.$son.'.
         <br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
-        $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 1) ");
         sendMail($email, $rrr, $subject, $message, $msg, $url);
         if ($result == 1) {
             echo 1;
@@ -410,7 +409,7 @@ if (isset($_POST['submit_icm'])) {
     $msg = '<span class="alert alert-success">Incident Marked Successfully and mail sent.</span>';
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 4) ");
 
-    $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$issue_id.' which you maeked as done, has been has been marked as INCOMPLETE by '.$son.'.
+    $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$issue_id.' which you maeked as done, has been marked as INCOMPLETE by '.$son.'.
     <br><br> <b>Comments</b>: '.$comments.'
     <br><br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
     sendMails($email, $rrr, $subject, $message, $msg, $url);
@@ -426,16 +425,36 @@ if (isset($_POST['submit_nai'])) {
     $comments = mysqli_real_escape_string($conn, $here['ncomments']);
     $date = date('d-m-Y H:i:s');
     $url = $here['url'];
+    $son = $_SESSION['name'];
 
     $query = mysqli_query($conn, "UPDATE issue set resolution_date = '$date', status = 2 where issue_id = '$issue_id'");
     if ($query) {
         $log = mysqli_query($conn, "INSERT into movement (issue_id, done_by, done_at, movement) values ('$issue_id', '$so', '$date', 'Incident was marked as not an issue.')");
     }
+    $sss = mysqli_query($conn, "SELECT * from issue where issue_id = '$issue_id'");
+    while ($rrrr = mysqli_fetch_array($sss)) {
+        $us2 = $rrrr['support_officer'];
+    }
+    // fetch assignee details
+    $u2 = mysqli_query($conn, "SELECT * from user where user_id = '$us2'");
+    while ($rr2 = mysqli_fetch_array($u2)) {
+        $email = $rr2['email'];
+        $name = $rr2['user_name'];
+    }
+    $rrr = strtok($name, " ");
     if ($comments != "") {
-
+    $msg = '<span class="alert alert-success">Incident Marked Successfully and mail sent.</span>';
+    $subject = 'Incident Marked As Not An Issue';
+    $message = 'Hello '.$rrr.', <br> Incident Log S/N '.$issue_id.' which you submitted, has been marked as NOT AN ISSUE by '.$son.'
+    <br><br> <b>Comments</b>: '.$comments.'
+    <br><br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 2) ");
-
-    echo 1;
+    sendMail($email, $rrr, $subject, $message, $msg, $url);
+    if ($result == 1) {
+        echo 1;
+    } else {
+        echo 0;
+    }
 } else {
     echo 2;
 }
@@ -508,18 +527,45 @@ if (isset($_POST['submit_noc'])) {
     $comments = mysqli_real_escape_string($conn, $here['dcomments']);
     $date = date('d-m-Y H:i:s');
     $url = $here['url'];
+    $son = $_SESSION['name'];
 
     $query = mysqli_query($conn, "UPDATE issue set status = 5 where issue_id = '$issue_id'");
     if ($query) {
         $log = mysqli_query($conn, "INSERT into movement (issue_id, done_by, done_at, movement) values ('$issue_id', '$so', '$date', 'Incident was marked as not clear.')");
     }
+    $sss = mysqli_query($conn, "SELECT * from issue where issue_id = '$issue_id'");
+    while ($rrrr = mysqli_fetch_array($sss)) {
+        $us2 = $rrrr['support_officer'];
+    }
+    // fetch assignee details
+    $u2 = mysqli_query($conn, "SELECT * from user where user_id = '$us2'");
+    while ($rr2 = mysqli_fetch_array($u2)) {
+        $email = $rr2['email'];
+        $name = $rr2['user_name'];
+    }
+    $rrr = strtok($name, " ");
+    $msg = '<span class="alert alert-success">Incident Marked Successfully and mail sent.</span>';
+    $subject = 'Incident Marked as Not Clear';
     if ($comments != "") {
-
+        $message = 'Hello '.$rrr.', <br> Incident Log S/N '.$issue_id.' has been marked as NOT CLEAR by '.$son.'
+        <br><br> <b>Comments</b>: '.$comments.'
+        <br><br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 5) ");
-
-    echo 1;
+    sendMail($email, $rrr, $subject, $message, $msg, $url);
+    if ($result == 1) {
+        echo 1;
+    } else {
+        echo 0;
+    }
 } else {
-    echo 2;
+    $message = 'Hello '.$rrr.', <br> Incident Log S/N '.$issue_id.' has been marked as NOT CLEAR by '.$son.'
+    <br><br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
+    sendMail($email, $rrr, $subject, $message, $msg, $url);
+    if ($result == 1) {
+        echo 2;
+    } else {
+        echo 0;
+    }
 }
 }
 
@@ -552,6 +598,7 @@ if (isset($_POST['submit_reo'])) {
     parse_str($_POST['dataset'], $here);
 
     $so = $_SESSION['id'];
+    $son = $_SESSION['name'];
     $issue_id = $here['issue_id'];
     $comments = mysqli_real_escape_string($conn, $here['rcomments']);
     $date = date('d-m-Y H:i:s');
@@ -561,13 +608,39 @@ if (isset($_POST['submit_reo'])) {
     if ($query) {
         $log = mysqli_query($conn, "INSERT into movement (issue_id, done_by, done_at, movement) values ('$issue_id', '$so', '$date', 'Incident was reopened.')");
     }
+    $sss = mysqli_query($conn, "SELECT * from issue where issue_id = '$issue_id'");
+    while ($rrrr = mysqli_fetch_array($sss)) {
+        $us2 = $rrrr['user'];
+    }
+    // fetch assignee details
+    $u2 = mysqli_query($conn, "SELECT * from user where user_name = '$us2'");
+    while ($rr2 = mysqli_fetch_array($u2)) {
+        $email = $rr2['email'];
+        $name = $rr2['user_name'];
+    }
+    $rrr = strtok($name, " ");
+    $msg = '<span class="alert alert-success">Incident Marked Successfully and mail sent.</span>';
+    $subject = 'Incident Reopened';
     if ($comments != "") {
-
+    $message = 'Hello '.$rrr.', <br> Incident Log S/N '.$issue_id.' has been REOPENED by '.$son.'
+    <br><br> <b>Comments</b>: '.$comments.'
+    <br><br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 0) ");
-
-    echo 1;
+    sendMail($email, $rrr, $subject, $message, $msg, $url);
+    if ($result == 1) {
+        echo 1;
+    } else {
+        echo 0;
+    }
 } else {
-    echo 2;
+    $message = 'Hello '.$rrr.', <br> Incident Log S/N '.$issue_id.' has been REOPENED by '.$son.'
+    <br><br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
+    sendMail($email, $rrr, $subject, $message, $msg, $url);
+    if ($result == 1) {
+        echo 2;
+    } else {
+        echo 0;
+    }
 }
 }
 
