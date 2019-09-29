@@ -460,6 +460,57 @@ if (isset($_POST['submit_nai'])) {
 }
 }
 
+if (isset($_POST['submit_noa'])) {
+
+    parse_str($_POST['dataset'], $here);
+
+    $so = $_SESSION['id'];
+    $issue_id = $here['issue_id'];
+    $comments = mysqli_real_escape_string($conn, $here['ncomments']);
+    $date = date('d-m-Y H:i:s');
+    $url = $here['url'];
+    $son = $_SESSION['name'];
+
+    $query = mysqli_query($conn, "UPDATE issue set resolution_date = '$date', status = 10 where issue_id = '$issue_id'");
+    if ($query) {
+        $log = mysqli_query($conn, "INSERT into movement (issue_id, done_by, done_at, movement) values ('$issue_id', '$so', '$date', 'Incident was marked as Not Applicable.')");
+    }
+    $sss = mysqli_query($conn, "SELECT * from issue where issue_id = '$issue_id'");
+    while ($rrrr = mysqli_fetch_array($sss)) {
+        $us2 = $rrrr['support_officer'];
+    }
+    // fetch assignee details
+    $u2 = mysqli_query($conn, "SELECT * from user where user_id = '$us2'");
+    while ($rr2 = mysqli_fetch_array($u2)) {
+        $email = $rr2['email'];
+        $name = $rr2['user_name'];
+    }
+    $rrr = strtok($name, " ");
+    if ($comments != "") {
+    $msg = '<span class="alert alert-success">Incident Marked Successfully and mail sent.</span>';
+    $subject = 'Incident Marked As Not Applicable';
+    $message = 'Hello '.$rrr.', <br> Incident Log S/N '.$issue_id.' which you submitted, has been marked as NOT APPLICABLE by '.$son.'
+    <br><br> <b>Comments</b>: '.$comments.'
+    <br><br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
+    $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 10) ");
+    sendMail($email, $rrr, $subject, $message, $msg, $url);
+    if ($result == 1) {
+        echo 1;
+    } else {
+        echo 0;
+    }
+} else {
+    $message = 'Hello '.$rrr.', <br> Incident Log S/N '.$issue_id.' which you submitted, has been marked as NOT APPLICABLE by '.$son.'
+    <br><br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
+    sendMail($email, $rrr, $subject, $message, $msg, $url);
+    if ($result == 1) {
+        echo 2;
+    } else {
+        echo 0;
+    }
+}
+}
+
 if (isset($_POST['submit_comm'])) {
 
     parse_str($_POST['dataset'], $here);

@@ -627,6 +627,36 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
 
     });
     }
+
+    function dope8(iss){
+    let fid = 'submit_noa'+iss;
+    console.log(fid)
+    $('#'+fid).submit(function(){
+        $('#submit_noa').prop('disabled', true);
+        $('#submitnoa').html('Processing...');
+        let id = 'submit_noa';
+        let dataset = $(this).serialize();
+        $.ajax({
+            url: 'processing.php',
+            type: 'post',
+            data: {dataset, submit_noa: id},
+            success: function(response){
+                if (response == 1) {
+                    console.log(response)
+                    $('#noa'+iss).modal('hide');
+                    $('#success').html('Incident Marked as Not Applicable and mail was sent');
+                    $('#launch').modal('show');
+                } else if (response == 2) {
+                    console.log(response)
+                    $('#noa'+iss).modal('hide');
+                    $('#success').html('Incident Marked as Not Applicable.');
+                    $('#launch').modal('show');
+                }
+            }
+        });
+
+    });
+    }
     </script>
     <script type="text/javascript" language="javascript" >
      $(document).ready(function(){
@@ -676,6 +706,9 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
                     break;
                 case '9': 
                     $(row).css('background-color', '#e777e3');
+                    break;
+                case '10': 
+                    $(row).css('background-color', '#AA5151');
                     break;
                 default:
                     $(row).css('background-color', 'white');
@@ -749,6 +782,9 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
                             break;
                         case '9': 
                             $(row).css('background-color', '#e777e3');
+                            break;
+                        case '10': 
+                            $(row).css('background-color', '#AA5151');
                             break;
                         default:
                             $(row).css('background-color', 'white');

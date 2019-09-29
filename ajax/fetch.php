@@ -207,7 +207,9 @@ $reqa = "<div class='modal fade' id='req".$row['issue_id']."'>
                     $ccc .= '<b>'.$userrr.' - (Disapproved):</b> '.$cq['comment'].' <i> @ '.$cq['date_added'].'</i><br>'; 
                 } elseif ($sstatus == 8) {
                     $ccc .='<b>'.$userrr.' - (Approved):</b> '.$cq['comment'].' <i> @ '.$cq['date_added'].'</i><br>'; 
-                } else {
+                } elseif ($sstatus == 10) {
+                    $ccc .='<b>'.$userrr.' - (Not Applicable):</b> '.$cq['comment'].' <i> @ '.$cq['date_added'].'</i><br>'; 
+                }  else {
                     $ccc .= '<b>'.$userrr.' - :</b> '.$cq['comment'].' <i> @ '.$cq['date_added'].'</i><br>'; 
                 }
                 
@@ -333,6 +335,28 @@ $nai = "<div class='modal fade' id='nai".$row['issue_id']."'>
                                 <input type='hidden' name='url' value='".$url."'><br>
                                 <br><button onClick='dope3(".$row['issue_id'].")' id='submit_naid' type='submit' class='btn btn-primary' name='submit_nai'>Mark as Not an Issue</button>
                                 <p id='submitnai'></p>
+                            </form><br>
+                        </div>
+                    </div>
+                </div>
+            </div>";
+$noa = "<div class='modal fade' id='noa".$row['issue_id']."'>
+                <div class='modal-dialog modal-notify modal-primary'>
+                    <div class='modal-content'>
+                        <div class='modal-header'>
+                            <h5 class='heading lead'>Add Additional Comments</h5>
+                            <button type='button' class='close' data-dismiss='modal'><span>&times;</span></button>
+                        </div>
+                        <div class='modal-body'>
+                            <p>Add Additional Comments If Available</p>
+                            <form method='post' id='submit_noa".$row['issue_id']."' action='javascript:;'>
+                            <div class='md-form'>    
+                                <textarea type='text' id='form79textarea' class='md-textarea form-control' cols='40' name='ncomments' required></textarea>
+                            </div>
+                                <input type='hidden' name='issue_id' value='".$row['issue_id']."'><br>
+                                <input type='hidden' name='url' value='".$url."'><br>
+                                <br><button onClick='dope8(".$row['issue_id'].")' id='submit_noa' type='submit' class='btn btn-primary' name='submit_noa'>Mark as Not Applicable</button>
+                                <p id='submitnoa'></p>
                             </form><br>
                         </div>
                     </div>
@@ -565,6 +589,7 @@ if ($status == 0 or $status == 8 and $row['type']==0 or $row['type']==2) {
                     <a data-toggle='modal' data-target='#noc".$row['issue_id']."' class='dropdown-item' href='#'>Not Clear</a>
                     <a data-toggle='modal' data-target='#req".$row['issue_id']."' class='dropdown-item' href='#'>Requires Approval</a>
                     <a data-toggle='modal' data-target='#iip".$row['issue_id']."' class='dropdown-item' href='#'>Incomplete Information</a>
+                    <a data-toggle='modal' data-target='#noa".$row['issue_id']."' class='dropdown-item' href='#'>Not Applicable</a>
                 <div class='dropdown-divider'></div>
                     <a data-toggle='modal' data-target='#comm".$row['issue_id']."' class='dropdown-item' href='#'>Add Comments</a>
                     <a data-toggle='modal' data-target='#comments".$row['issue_id']."' class='dropdown-item' href='#'>View Comments</a>
@@ -578,6 +603,7 @@ if ($status == 0 or $status == 8 and $row['type']==0 or $row['type']==2) {
                 </div>
             </div>
             ".$reqa."
+            ".$noa."
             ".$noc."
             ".$nai."
             ".$comm."
@@ -842,6 +868,33 @@ if ($status == 0 or $status == 8 and $row['type']==0 or $row['type']==2) {
             ".$iip."
             ".$acc."
             ".$movement."
+            ";
+    }  elseif ($status == 10) {
+            $actions = "  <div class='dropdown'>
+                <button class='btn btn-xs btn-primary dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                Action
+                </button>
+                <div class='dropdown-menu' aria-labelledby='dropdownMenuButton'>
+                <a data-toggle='modal' data-target='reo".$row['issue_id']."' class='dropdown-item' href='#'>Reopen</a>                
+                <div class='dropdown-divider'></div>
+                    <a data-toggle='modal' data-target='#comm".$row['issue_id']."' class='dropdown-item' href='#'>Add Comments</a>
+                    <a data-toggle='modal' data-target='#comments".$row['issue_id']."' class='dropdown-item' href='#'>View Comments</a>
+                <div class='dropdown-divider'></div>
+                    <a class='dropdown-item' href='image.php?issue_id=".$row['issue_id']."'>Upload Media</a>
+                    <a class='dropdown-item' data-toggle='modal' href='#".$row['issue_id']."media'>View Media</a>
+                <div class='dropdown-divider'></div>
+                    <a class='dropdown-item' href='edit.php?issue_id=".$row['issue_id']."'>Edit Incident</a>
+                    <a class='dropdown-item' data-toggle='modal' href='#re".$row['issue_id']."'>Reassign Incident</a>
+                    <a class='dropdown-item' data-toggle='modal' href='#logs".$row['issue_id']."'>View Incident Movement</a>
+                </div>
+            </div>
+            ".$comm."
+            ".$media."
+            ".$reassign."
+            ".$iip."
+            ".$acc."
+            ".$movement."
+            ".$reopen."
             ";
         }
  $so = $row['support_officer'];
