@@ -89,6 +89,7 @@ $noww = date('M Y');
                                                     <option value="" selected="">Select One</option>
                                                     <option value="Onsite">Onsite</option>
                                                     <option value="Remote">Remote</option>
+                                                    <option value="Not Applicable">Not Applicable</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -100,6 +101,7 @@ $noww = date('M Y');
                                                     <option value="Complete (All Done)">Complete (All Done)</option>
                                                     <option value="Incomplete (Partially Done)">Incomplete (Partially Done)</option>
                                                     <option value="Pending (Escalated)">Pending (Escalated)</option>
+                                                    <option value="Not Applicable">Not Applicable</option>
                                                 </select>
                                             </div>
                                         </div>

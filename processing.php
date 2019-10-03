@@ -499,15 +499,6 @@ if (isset($_POST['submit_noa'])) {
     } else {
         echo 0;
     }
-} else {
-    $message = 'Hello '.$rrr.', <br> Incident Log S/N '.$issue_id.' which you submitted, has been marked as NOT APPLICABLE by '.$son.'
-    <br><br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
-    sendMail($email, $rrr, $subject, $message, $msg, $url);
-    if ($result == 1) {
-        echo 2;
-    } else {
-        echo 0;
-    }
 }
 }
 

@@ -211,6 +211,7 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
                                             <option value="7">Not Approved</option>
                                             <option value="4">Incomplete</option>
                                             <option value="9">Incomplete Information</option>
+                                            <option value="10">Not Applicable</option>
                                         </select>
                                     </div>&nbsp;&nbsp;
                                     <div class="col-sm-2">
@@ -650,6 +651,11 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
                     console.log(response)
                     $('#noa'+iss).modal('hide');
                     $('#success').html('Incident Marked as Not Applicable.');
+                    $('#launch').modal('show');
+                } else if (response == 0) {
+                    console.log(response)
+                    $('#noa'+iss).modal('hide');
+                    $('#success').html('Incident Marked as Not Applicable but mail did not send.');
                     $('#launch').modal('show');
                 }
             }

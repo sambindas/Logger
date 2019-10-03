@@ -875,7 +875,7 @@ if ($status == 0 or $status == 8 and $row['type']==0 or $row['type']==2) {
                 Action
                 </button>
                 <div class='dropdown-menu' aria-labelledby='dropdownMenuButton'>
-                <a data-toggle='modal' data-target='reo".$row['issue_id']."' class='dropdown-item' href='#'>Reopen</a>                
+                <a data-toggle='modal' data-target='#reo".$row['issue_id']."' class='dropdown-item' href='#'>Reopen</a>                
                 <div class='dropdown-divider'></div>
                     <a data-toggle='modal' data-target='#comm".$row['issue_id']."' class='dropdown-item' href='#'>Add Comments</a>
                     <a data-toggle='modal' data-target='#comments".$row['issue_id']."' class='dropdown-item' href='#'>View Comments</a>
@@ -889,12 +889,12 @@ if ($status == 0 or $status == 8 and $row['type']==0 or $row['type']==2) {
                 </div>
             </div>
             ".$comm."
+            ".$reopen."
             ".$media."
             ".$reassign."
             ".$iip."
             ".$acc."
             ".$movement."
-            ".$reopen."
             ";
         }
  $so = $row['support_officer'];

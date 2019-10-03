@@ -114,6 +114,7 @@ if ($user_id != $_SESSION['id']) {
                                                     <option value="">Select One</option>
                                                     <option  <?php if ($visit_type == 'Onsite') {echo 'selected';} ?> value="Onsite">Onsite</option>
                                                     <option <?php if ($visit_type == 'Remote') {echo 'selected';} ?> value="Remote">Remote</option>
+                                                    <option <?php if ($visit_type == 'Not Applicable') {echo 'selected';} ?> value="Not Applicable">Not Applicable</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -125,6 +126,7 @@ if ($user_id != $_SESSION['id']) {
                                                     <option <?php if ($status == 'Complete (All Done)') {echo 'selected';} ?> value="Complete (All Done)">Complete (All Done)</option>
                                                     <option <?php if ($status == 'Incomplete (Partially Done)') {echo 'selected';} ?> value="Incomplete (Partially Done)">Incomplete (Partially Done)</option>
                                                     <option <?php if ($status == 'Pending (Escalated)') {echo 'selected';} ?> value="Pending (Escalated)">Pending (Escalated)</option>
+                                                    <option <?php if ($status == 'Not Applicable') {echo 'selected';} ?> value="Not Applicable">Not Applicable</option>
                                                 </select>
                                             </div>
                                         </div>

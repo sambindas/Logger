@@ -168,6 +168,7 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
                                             <option value="3">3</option>
                                             <option value="4">4</option>
                                             <option value="5">5</option>
+                                            <option value="6">6</option>
                                         </select>
                                     </div>&nbsp;&nbsp; &nbsp;&nbsp;
                                     <div class="col-xs-2">
