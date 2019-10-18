@@ -29,6 +29,11 @@ $il = mysqli_query($conn, "SELECT * from issue where month = '$noww' order by is
 }
 
 $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and user_type = 0 and state_id = $user_state_id");
+if ($_SESSION['id'] == 6 or $_SESSION['id'] == 1) {
+    $facility = mysqli_query($conn, "SELECT * from facility order by name asc");
+} else {
+    $facility = mysqli_query($conn, "SELECT * from facility where state_id = $user_state_id order by name asc");
+}
 ?>
 
 <!doctype html>
@@ -49,7 +54,7 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
     <link rel="stylesheet" href="assets/css/metisMenu.css">
     <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
     <link rel="stylesheet" href="assets/css/slicknav.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6/css/select2.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet"/>
     <!-- amcharts css -->
     <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
     <!-- Start datatable css -->
@@ -221,6 +226,17 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
                                             <?php
                                             while ($logger = mysqli_fetch_array($incident_logger)) {
                                                 echo '<option value="'.$logger['user_id'].'">'.$logger['user_name'].'</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>&nbsp;&nbsp;
+                                    <div class="col-sm-2">
+                                        <label>Facility</label>
+                                        <select class="form-control js-example-basic-single" id="facility">
+                                            <option value="">All</option>
+                                            <?php
+                                            while ($facc = mysqli_fetch_array($facility)) {
+                                                echo '<option value="'.$facc['code'].'">'.$facc['name'].'</option>';
                                             }
                                             ?>
                                         </select>
@@ -670,7 +686,7 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
         fill_datatable();
       
     
-      function fill_datatable(filter_status = '', filter_assign = '', logger = '', view = 0, datetimepicker1 = '', datetimepicker2 = '', search_table = '')
+      function fill_datatable(filter_status = '', filter_assign = '', logger = '', view = 0, facility='', datetimepicker1 = '', datetimepicker2 = '', search_table = '')
       {
        $('#dataTable2').DataTable({
         
@@ -726,7 +742,7 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
          url:"ajax/fetch.php",
          type:"POST",
          data:{
-          filter_status:filter_status, logger:logger, view:view, filter_assign:filter_assign, datetimepicker1:datetimepicker1, datetimepicker2:datetimepicker2, search_table:search_table
+          filter_status:filter_status, logger:logger, view:view, filter_assign:filter_assign, facility:facility, datetimepicker1:datetimepicker1, datetimepicker2:datetimepicker2, search_table:search_table
          }
         },
         "columnDefs": [
@@ -748,6 +764,7 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
             var datetimepicker2 = $('#datetimepicker2').val();
             var logger = $('#logger').val();
             var view = $('#view').val();
+            var facility = $('#facility').val();
 
             $('#dataTable2').DataTable({
                 "processing" : true,
@@ -802,7 +819,7 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
                 url:"ajax/fetch.php",
                 type:"POST",
                 data:{
-                filter_status:filter_status, logger:logger, view:view, filter_assign:filter_assign, datetimepicker1:datetimepicker1, datetimepicker2:datetimepicker2, search_table:search_table
+                filter_status:filter_status, logger:logger, view:view, filter_assign:filter_assign, facility:facility, datetimepicker1:datetimepicker1, datetimepicker2:datetimepicker2, search_table:search_table
                 }
                 },
                 "columnDefs": [
@@ -821,11 +838,12 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
         var datetimepicker2 = $('#datetimepicker2').val();
         var logger = $('#logger').val();
         var view = $('#view').val();
+        var facility = $('#facility').val();
         
         if(search_table != '')
            {
             $('#dataTable2').DataTable().destroy();
-            fill_datatable(filter_status, filter_assign, logger, view, datetimepicker1, datetimepicker2, search_table);
+            fill_datatable(filter_status, filter_assign, logger, view, facility, datetimepicker1, datetimepicker2, search_table);
            }
            else
            {
@@ -837,11 +855,12 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
        var filter_assign = $('#filter_assign').val();
        var logger = $('#logger').val();
        var view = $('#view').val();
+       var facility = $('#facility').val();
 
        if(filter_status != '' || filter_assign != '' || logger !='' || view != '')
        {
         $('#dataTable2').DataTable().destroy();
-        fill_datatable(filter_status, filter_assign, logger, view);
+        fill_datatable(filter_status, filter_assign, logger, view, facility);
        }
        else
        {
@@ -855,11 +874,12 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
        var filter_assign = $('#filter_assign').val();
        var logger = $('#logger').val();
        var view = $('#view').val();
+       var facility = $('#facility').val();
 
        if(filter_status != '' || filter_assign != '' || logger !='' || view !='')
        {
         $('#dataTable2').DataTable().destroy();
-        fill_datatable(filter_status, filter_assign, logger, view);
+        fill_datatable(filter_status, filter_assign, logger, view, facility);
        }
        else
        {
@@ -873,11 +893,12 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
        var filter_assign = $('#filter_assign').val();
        var logger = $('#logger').val();
        var view = $('#view').val();
+       var facility = $('#facility').val();
 
        if(filter_status != '' || filter_assign != '' || logger !='' || view != '')
        {
         $('#dataTable2').DataTable().destroy();
-        fill_datatable(filter_status, filter_assign, logger, view);
+        fill_datatable(filter_status, filter_assign, logger, view, facility);
        }
        else
        {
@@ -891,11 +912,31 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
        var filter_assign = $('#filter_assign').val();
        var logger = $('#logger').val();
        var view = $('#view').val();
+       var facility = $('#facility').val();
 
        if(filter_status != '' || filter_assign != '' || logger !='' || view !='')
        {
         $('#dataTable2').DataTable().destroy();
-        fill_datatable(filter_status, filter_assign, logger, view);
+        fill_datatable(filter_status, filter_assign, logger, view, facility);
+       }
+       else
+       {
+        $('#dataTable2').DataTable().destroy();
+        fill_datatable();
+       }
+      });
+
+      $(document).on("change", "#facility", function(){
+       var filter_status = $('#filter_status').val();
+       var filter_assign = $('#filter_assign').val();
+       var logger = $('#logger').val();
+       var view = $('#view').val();
+       var facility = $('#facility').val();
+
+       if(filter_status != '' || filter_assign != '' || logger !='' || view !='')
+       {
+        $('#dataTable2').DataTable().destroy();
+        fill_datatable(filter_status, filter_assign, logger, view, facility);
        }
        else
        {
@@ -911,11 +952,12 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
        var datetimepicker2 = $('#datetimepicker2').val();
        var logger = $('#logger').val();
        var view = $('#view').val();
+       var facility = $('#facility').val();
 
        if(filter_status != '' || filter_assign != '' || datetimepicker1 != '')
        {
         $('#dataTable2').DataTable().destroy();
-        fill_datatable(filter_status, filter_assign, logger, view, datetimepicker1, datetimepicker2);
+        fill_datatable(filter_status, filter_assign, logger, view, facility, datetimepicker1, datetimepicker2);
        }
        else
        {
@@ -943,10 +985,12 @@ $incident_logger = mysqli_query($conn, "SELECT * from user where status = 1 and 
 </script>
     <script src="jquery.datetimepicker.full.min.js"></script>
     <script src="jquery.datetimepicker.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-            
+            $(document).ready(function() {
+                $('.js-example-basic-single').select2();
+            });
         });
     </script>
     <!-- MDB core JavaScript -->

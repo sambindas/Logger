@@ -34,6 +34,13 @@ if(isset($_POST['filter_status']) && $_POST['filter_status'] != '')
  ';
 }
 
+if(isset($_POST['facility']) && $_POST['facility'] != '')
+{
+ $query .= ' and 
+ facility = "'.$_POST['facility'].'" 
+ ';
+}
+
 if(isset($_POST['view']))
 {
  $query .= ' and 
@@ -911,7 +918,7 @@ $f = mysqli_fetch_array(mysqli_query($conn, "SELECT * from facility where code =
 
  $sub_array = array();
  $sub_array[] = $row['issue_id'];
- $sub_array[] = '<div title="'.$f['name'].'">'.$row['facility'].'</div>';
+ $sub_array[] = '<div title="'.$f['name'].'">'.$f['name'].'</div>';
  $sub_array[] = $row['issue_type'];
  $sub_array[] = '<div title="Asigned To: '.$assto.'">'.$row['issue'].'</div>';
  $sub_array[] = $row['priority'];
