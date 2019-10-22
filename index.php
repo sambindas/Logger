@@ -204,7 +204,7 @@ if ($_SESSION['id'] == 6 or $_SESSION['id'] == 1) {
                                     </div> &nbsp;&nbsp; &nbsp;&nbsp;
                                     <div class="col-sm-2">
                                         <label>Incident Status</label>
-                                        <select class="form-control" id="filter_status">
+                                        <select class="form-control js-example-basic-single" id="filter_status">
                                             <option value="">Select One</option>
                                             <option value="0">Open / Unassigned</option>
                                             <option value="8">Open / Assigned</option>
@@ -221,7 +221,7 @@ if ($_SESSION['id'] == 6 or $_SESSION['id'] == 1) {
                                     </div>&nbsp;&nbsp;
                                     <div class="col-sm-2">
                                         <label>Incident Logger</label>
-                                        <select class="form-control" id="logger">
+                                        <select class="form-control js-example-basic-single" id="logger">
                                             <option value="">Select One</option>
                                             <?php
                                             while ($logger = mysqli_fetch_array($incident_logger)) {
