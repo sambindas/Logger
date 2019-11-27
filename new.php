@@ -104,7 +104,7 @@ $state_id = $_SESSION['state_id'];
                                         </div>
                                     </div>
                                     <h4 class="header-title mb-0">Incident</h4>
-                                    <textarea cols="73" rows="6" type="text" id="issue" name="issue" placeholder="issue" required></textarea>
+                                    <textarea cols="73" rows="6" type="text" id="issue" class="issue" name="issue" placeholder="issue" required></textarea>
                                     <script>
                                         CKEDITOR.replace( 'issue' );
                                     </script><br>
@@ -202,6 +202,23 @@ $state_id = $_SESSION['state_id'];
                 return false;
             }
          });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#icr').on('blur', function(){
+                var issue = CKEDITOR.instances['issue'].getData();
+                console.log(issue);
+                $.ajax({
+                type:'POST',
+                url:'ajax/checkIssue.php',
+                data:'issue='+issue,
+                success:function(html){
+                    $('#level').html(html);
+                    $('#assign').html('<option value="">Select Level first</option>'); 
+                }
+            }); 
+            });
+        });
     </script>
     <script type="text/javascript">
     $(document).ready(function(){

@@ -183,6 +183,7 @@ if (isset($_POST['submit_cst'])) {
                                                                 <?php
                                                                     echo '<a data-toggle="modal" data-target="#edt'.$li_row["id"].'" class="dropdown-item" href="#">Edit</a>';
                                                                     echo '<a data-toggle="modal" data-target="#cst'.$li_row["id"].'" class="dropdown-item" href="#">Change State</a>';
+                                                                    echo '<a class="dropdown-item" href="server.php?facility_id='.$li_row["id"].'">Server Access</a>';
                                                                     echo '<a data-toggle="modal" data-target="#del'.$li_row["id"].'" class="dropdown-item" href="#">Delete</a>';
                                                                 ?>
                                                             </div>

@@ -89,7 +89,7 @@ if (isset($_POST['edit_issue'])) {
     $url = $_POST['url'];
     $action = "Incident was Edited";
 
-        $insert = mysqli_query($conn, "UPDATE issue set facility = '$facility', issue_type = '$type', issue_level = '$il', issue = '$issue', issue_date = '$date',
+        $insert = mysqli_query($conn, "UPDATE issue set facility = '$facility', issue_type = '$type', issue_level = '$il', issue = '$issue',
          issue_client_reporter = '$icr', affected_dept = '$ad', support_officer = '$so', priority = '$priority', issue_reported_on = '$irod' where issue_id = '$issue_id'");
         if ($insert) {
             $log = mysqli_query($conn, "INSERT into movement (issue_id, done_by, done_at, movement) values ('$issue_id', '$so', '$date', '$action')");
@@ -409,11 +409,32 @@ if (isset($_POST['submit_icm'])) {
     $msg = '<span class="alert alert-success">Incident Marked Successfully and mail sent.</span>';
     $query2 = mysqli_query($conn, "INSERT into comments (issue_id, comment, user, date_added, status) values ('$issue_id', '$comments', '$so', '$date', 4) ");
 
-    $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$issue_id.' which you maeked as done, has been marked as INCOMPLETE by '.$son.'.
+    $message = 'Hello '.$rrr.' <br> Incident Log S/N '.$issue_id.' which you marked as done, has been marked as INCOMPLETE by '.$son.'.
     <br><br> <b>Comments</b>: '.$comments.'
     <br><br> Please <a href="incident-log.eclathealthcare.com">Log In</a> and Check. <br> Best Regards.';
     sendMails($email, $rrr, $subject, $message, $msg, $url);
 }
+}
+
+if (isset($_POST['bump'])) {
+    $so = $_SESSION['id'];
+    $issue_id = $_POST['issue_id'];
+    $date = date('d-m-Y H:i:s');
+    $url = $_POST['url'];
+    $month = date('M Y');
+    $fdate = date('Y-m-d');
+
+    $bump = mysqli_query($conn, "UPDATE issue set issue_date = '$date', month = '$month', fissue_date = '$fdate', is_bump = 1 where issue_id = '$issue_id'");
+    if ($bump) {
+        $log = mysqli_query($conn, "INSERT into movement (issue_id, done_by, done_at, movement) values ('$issue_id', '$so', '$date', 'Incident was bumped.')");
+        if ($log) {
+            $_SESSION['msg'] = '<span class="alert alert-success">Incident Bumped Successfully.</span>';
+            header("Location: $url ");
+        }
+    } else {
+        $_SESSION['msg'] = '<span class="alert alert-dager">An error occured, please try again.</span>';
+        header("Location: $url ");
+    }
 }
 
 if (isset($_POST['submit_nai'])) {

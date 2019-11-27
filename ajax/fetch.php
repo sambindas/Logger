@@ -75,7 +75,7 @@ if(isset($_POST['order']))
 }
 else
 {
- $query .= 'ORDER BY issue_id DESC ';
+ $query .= 'ORDER BY issue_date DESC ';
 }
 
 // print_r($query);
@@ -265,6 +265,41 @@ $send_to_client = "<div class='modal fade' id='send".$row['issue_id']."'>
                     </div>
                 </div>
             </div>";
+if ($row['month'] == $noww) {
+    $bump = "<div class='modal fade' id='bump".$row['issue_id']."'>
+                <div class='modal-dialog modal-notify modal-primary modal-notify modal-primary modal-sm'>
+                    <div class='modal-content'>
+                        <div class='modal-header'>
+                            <h5 class='heading lead'>Bump Incident To Top</h5>
+                            <button type='button' class='close' data-dismiss='modal'><span>&times;</span></button>
+                        </div>
+                        <div class='modal-body'>
+                        This action will send this Incident to the top of the log
+                            <form method='post' action='processing.php'>
+                                <input type='hidden' name='issue_id' value='".$row['issue_id']."'><br>
+                                <input type='hidden' name='url' value='".$url."'><br>
+                                <br><button type='submit' class='btn btn-primary' name='bump'>Bump Incident</button>
+                            </form><br>
+                        </div>
+                    </div>
+                </div>
+            </div>";
+} else {
+    $bump = "<div class='modal fade' id='bump".$row['issue_id']."'>
+                <div class='modal-dialog modal-notify modal-primary modal-notify modal-primary modal-sm'>
+                    <div class='modal-content'>
+                        <div class='modal-header'>
+                            <h5 class='heading lead'>Bump Incident To Top</h5>
+                            <button type='button' class='close' data-dismiss='modal'><span>&times;</span></button>
+                        </div>
+                        <div class='modal-body'>
+                        You can only bump Incidents within the same month.
+                        </div>
+                    </div>
+                </div>
+            </div>";
+}
+
 $acc = "<div class='modal fade' id='comm".$row['issue_id']."'>
             <div class='modal-dialog modal-notify modal-primary' role='document'>
                 <div class='modal-content'>
@@ -604,12 +639,14 @@ if ($status == 0 or $status == 8 and $row['type']==0 or $row['type']==2) {
                     <a class='dropdown-item' href='image.php?issue_id=".$row['issue_id']."'>Upload Media</a>
                     <a class='dropdown-item' data-toggle='modal' href='#".$row['issue_id']."media'>View Media</a>
                 <div class='dropdown-divider'></div>
+                    <a data-toggle='modal' data-target='#bump".$row['issue_id']."' class='dropdown-item' href='#'>Bump</a>
                     <a class='dropdown-item' href='edit.php?issue_id=".$row['issue_id']."'>Edit Incident</a>
                     <a class='dropdown-item' data-toggle='modal' href='#re".$row['issue_id']."'>Reassign Incident</a>
                     <a class='dropdown-item' data-toggle='modal' href='#logs".$row['issue_id']."'>View Incident Movement</a>
                 </div>
             </div>
             ".$reqa."
+            ".$bump."
             ".$noa."
             ".$noc."
             ".$nai."
@@ -752,12 +789,13 @@ if ($status == 0 or $status == 8 and $row['type']==0 or $row['type']==2) {
                     <a class="dropdown-item" href="image.php?issue_id='.$row['issue_id'].'">Upload Media</a>
                     <a class="dropdown-item" data-toggle="modal" href="#'.$row['issue_id'].'media">View Media</a>
                 <div class="dropdown-divider"></div>
+                    <a data-toggle="modal" data-target="#bump'.$row['issue_id'].'" class="dropdown-item" href="#">Bump</a>
                     <a class="dropdown-item" href="edit.php?issue_id='.$row['issue_id'].'">Edit Incident</a>
                     <a class="dropdown-item" data-toggle="modal" href="#re'.$row['issue_id'].'">Reassign Incident</a>
                     <a class="dropdown-item" data-toggle="modal" href="#logs'.$row['issue_id'].'">View Incident Movement</a></div>
                 </div>
             </div>
-
+            '.$bump.'
             '.$done.'
             '.$reopen.'
             '.$comm.'
@@ -786,7 +824,6 @@ if ($status == 0 or $status == 8 and $row['type']==0 or $row['type']==2) {
                     <a class="dropdown-item" data-toggle="modal" href="#re'.$row['issue_id'].'">Reassign Incident</a>
                     <a class="dropdown-item" data-toggle="modal" href="#logs'.$row['issue_id'].'">View Incident Movement</a></div>
             </div>
-
             '.$done.'
             '.$reopen.'
             '.$comm.'
@@ -920,7 +957,12 @@ $f = mysqli_fetch_array(mysqli_query($conn, "SELECT * from facility where code =
  $sub_array[] = $row['issue_id'];
  $sub_array[] = '<div title="'.$f['name'].'">'.$f['name'].'</div>';
  $sub_array[] = $row['issue_type'];
- $sub_array[] = '<div title="Asigned To: '.$assto.'">'.$row['issue'].'</div>';
+ if ($row['is_bump'] == 1) {
+    $sub_array[] = '<div title="Asigned To: '.$assto.'">'.'<b>**Bumped**</b>'.$row['issue'].'</div>';
+ } else {
+    $sub_array[] = '<div title="Asigned To: '.$assto.'">'.$row['issue'].'</div>';
+ }
+ 
  $sub_array[] = $row['priority'];
  $sub_array[] = $rr;
  $sub_array[] = $row['issue_date'];
