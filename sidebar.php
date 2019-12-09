@@ -34,6 +34,16 @@
                                     <li><a href="portal.php">Client Credentials</a></li>
                                 </ul>
                             </li>
+                            <li>
+                                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-pie-chart"></i><span>Inventory</span></a>
+                                <ul class="collapse">
+                                    <li><a href="item.php">Inventory Items</a></li>
+                                    <li><a href="location.php">Inventory Locations</a></li>
+                                    <li><a href="transfer.php">Transfers</a></li>
+                                    <li><a href="itemquantity.php">Inventory Status</a></li>
+                                    <li><a href="movement.php">Inventory Movement</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </nav>
                 </div>
