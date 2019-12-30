@@ -28,6 +28,47 @@ $tim = $timee+300;
 
 $update = mysqli_query($conn, "UPDATE user set online_status = '$tim' where user_id = '$hid'");
 
+function sendMailUser($email, $rrr, $subject, $message) {
+  // Load Composer's autoloader
+      require 'vendor/autoload.php';
+
+      // Instantiation and passing `true` enables exceptions
+      $mail = new PHPMailer(true);
+
+      try {
+          //Server settings
+          $mail->SMTPDebug = 0;                                       // Enable verbose debug output
+          $mail->isSMTP();                                            // Set mailer to use SMTP
+          $mail->Host       = 'smtp.gmail.com;';  // Specify main and backup SMTP servers
+          $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
+          $mail->Username   = 'incidentlog00@gmail.com';              // SMTP username
+          $mail->Password   = 'wallace@femi';                         // SMTP password
+          $mail->SMTPSecure = 'tls';                                  // Enable TLS encryption, `ssl` also accepted
+          $mail->Port       = 587;                                    // TCP port to connect to
+
+          //Recipients
+          $mail->setFrom('incidentlog00@gmail.com', 'Incident Log');
+          $mail->addAddress($email, $rrr);     // Add a recipient
+          $mail->addReplyTo('incidentlog00@gmail.com', 'Incident Log');
+
+          // Content
+          $mail->isHTML(true);                                  // Set email format to HTML
+          $mail->Subject = $subject;
+          $mail->Body    = $message;
+          
+
+          if (!$mail->send()) {
+                $result = 0;
+            } else {
+                $result = 1;
+            }
+            echo $result;
+          exit();
+      } catch (Exception $e) {
+          echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+      }
+}
+
 function sendMail($email, $rrr, $subject, $message, $msg, $url) {
   // Load Composer's autoloader
       require 'vendor/autoload.php';

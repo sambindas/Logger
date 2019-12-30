@@ -968,7 +968,6 @@ if ($_SESSION['id'] == 6 or $_SESSION['id'] == 1) {
       
       
      });
-     
     </script>
     <!-- others plugins -->
     <script src="assets/js/plugins.js"></script>

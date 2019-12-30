@@ -5,110 +5,84 @@ require 'connection.php';
 require 'functions.php';
 checkUserSession();
 
-if (isset($_GET['token'])) {
-    $token = $_GET['token'];
-    $g = mysqli_query($conn, "SELECT * from grn where grn_token = '$token' and status != 2");
-    $g2 = mysqli_query($conn, "SELECT grn.*, items.item_name from grn inner join items on items.sku = grn.item where grn_token = '$token' and grn.status != 2");
+if (isset($_GET['receive_token'])) {
+    $receive_token = $_GET['receive_token'];
+    $g = mysqli_query($conn, "SELECT * from receive_grn where receive_token = '$receive_token' and status = 0");
+    $g2 = mysqli_query($conn, "SELECT * from receive_grn where receive_token = '$receive_token' and status = 0");
+
     while($gr = mysqli_fetch_array($g)){
-        $fromm = $gr['tfrom'];
-        $too = $gr['tto'];
-    }
-    $f = mysqli_query($conn, "SELECT * from locations where code = '".$fromm."'");
-    $t = mysqli_query($conn, "SELECT * from locations where code = '".$too."'");
-    while ($fr = mysqli_fetch_array($f)) {
-        $from = $fr['name'];
-    }
-    while ($tu = mysqli_fetch_array($t)) {
-        $to = $tu['name'];
+        $from = $gr['tfrom'];
+        $to = $gr['tto'];
     }
 }
 
 if (isset($_POST['process_grn'])) {
     $created_by = $_SESSION['id'];
-    $pin = mt_rand(100000000, 999999999)
-        . mt_rand(100000000, 999999999)
-        . $characters[rand(0, strlen($characters) - 1)];
-    $r_token = 'rec-'.str_shuffle($pin);
-
     $from = mysqli_real_escape_string($conn, $_POST['from']);
     $to = mysqli_real_escape_string($conn, $_POST['to']);
-    $grn_token = $_POST['grn_token'];
-    $f = mysqli_query($conn, "SELECT * from locations where code = '".$from."'");
-    $t = mysqli_query($conn, "SELECT * from locations where code = '".$to."'");
-    while ($fr = mysqli_fetch_array($f)) {
-        $fro = $fr['name'];
-    }
-    while ($tu = mysqli_fetch_array($t)) {
-        $tooo = $tu['name'];
-    }
+    $receive_token = $_POST['receive_token'];
 
-    for($i = 0; $i < count($_POST['item']); $i++)
-    {
-        $item = mysqli_real_escape_string($conn, $_POST['item'][$i]);
-        $uom = mysqli_real_escape_string($conn, $_POST['uom'][$i]);
-        $quantity = mysqli_real_escape_string($conn, $_POST['quantity'][$i]);
-        $db_quantity = mysqli_real_escape_string($conn, $_POST['db_quantity'][$i]);
-        $grn_id = $_POST['grn_id'][$i];
-        $up = $_POST['quantity_received'][$i];
-        $sku = $_POST['sku'][$i];
+    if ($_POST['receive_type'] == 1) {
+        for($i = 0; $i < count($_POST['item']); $i++) {
+            $item = $_POST['item'][$i];
+            $quantity = $_POST['quantity'][$i];
 
-        if (empty(trim($item))) continue;
-
-        $sql = "INSERT INTO receive_grn(receive_token, item_name, uom, quantity_received, created_at, created_by, grn_token, type, tfrom, tto, status)
-                VALUES('$r_token', '$item', '$uom', '$quantity', now(), '$created_by', '$grn_token', 1, '$fro', '$tooo', 1)";
-        
-        if(mysqli_query($conn, $sql)){
-
-            if ($up + $quantity == $db_quantity) {
-                $status = 2;
-            } elseif ($up + $quantity < $db_quantity) {
-                $status = 1;
+            $location_fr = mysqli_query($conn, "SELECT * from locations where name = '$from'");
+            while($ll = mysqli_fetch_array($location_fr)){
+                $code = $ll['code'];
             }
-            $updated_quantity = $quantity + $up;
-            $upd = mysqli_query($conn, "UPDATE grn set status = $status, quantity_received = '$updated_quantity' where grn_token = '$grn_token' and id = '$grn_id'");
 
-            if ($upd) {
-                $location_from = mysqli_query($conn, "SELECT * from items where sku = '$sku'");
+            $location_from = mysqli_query($conn, "SELECT * from items where item_name = '$item'");
+                
+            #add quantity to location sending to
+            while ($location_from_d = mysqli_fetch_array($location_from)) {
 
-                #add quantity to location sending to
-                while ($location_from_d = mysqli_fetch_array($location_from)) {
-
-                    $location_from_db = json_decode($location_from_d['item_quantity'], true);
-
-                    if (array_key_exists($from, $location_from_db)) {
-                        foreach ($location_from_db as $key => $value) {
-                            if ($from == $key) {
-                                $new_value = $value - $quantity;
-                                $location_from_db[$key] = $new_value;
-                                $updated_array = json_encode($location_from_db);
-                                $u = mysqli_query($conn, "UPDATE items set item_quantity = '$updated_array' where sku = '$sku'");
-                            }
+                $location_from_db = json_decode($location_from_d['item_quantity'], true);
+                if (array_key_exists($code, $location_from_db)) {
+                    foreach ($location_from_db as $key => $value) {
+                        if ($code == $key) {
+                            $new_value = $value - $quantity;
+                            $location_from_db[$key] = $new_value;
+                            $updated_array = json_encode($location_from_db);
+                            $u = mysqli_query($conn, "UPDATE items set item_quantity = '$updated_array' where item_name = '$item'");
                         }
                     }
                 }
-                $location_to = mysqli_query($conn, "SELECT * from items where sku = '$sku'");
-                #subtract quantity to location sending from
-                while ($location_to_d = mysqli_fetch_array($location_to)) {
+            }
+        }
+    } elseif ($_POST['receive_type'] == 0) {
+        for($i = 0; $i < count($_POST['item']); $i++) {
+            $item = $_POST['item'][$i];
+            $quantity = $_POST['quantity'][$i];
 
-                    $location_to_db = json_decode($location_to_d['item_quantity'], true);
-                    
-                    if (array_key_exists($to, $location_to_db)) {
-                        foreach ($location_to_db as $key => $value) {
-                            if ($to == $key) {
-                                $new_value = $value + $quantity;
-                                $location_to_db[$key] = $new_value;
-                                $updated_array = json_encode($location_to_db);
-                                mysqli_query($conn, "UPDATE items set item_quantity = '$updated_array' where sku = '$sku'");
-                            }
+            $location_to = mysqli_query($conn, "SELECT * from locations where name = '$to'");
+            while($ll = mysqli_fetch_array($location_to)){
+                $code = $ll['code'];
+            }
+
+            $location_from = mysqli_query($conn, "SELECT * from items where item_name = '$item'");
+                
+            #add quantity to location sending to
+            while ($location_from_d = mysqli_fetch_array($location_from)) {
+
+                $location_from_db = json_decode($location_from_d['item_quantity'], true);
+                if (array_key_exists($code, $location_from_db)) {
+                    foreach ($location_from_db as $key => $value) {
+                        if ($code == $key) {
+                            $new_value = $value + $quantity;
+                            $location_from_db[$key] = $new_value;
+                            $updated_array = json_encode($location_from_db);
+                            $u = mysqli_query($conn, "UPDATE items set item_quantity = '$updated_array' where item_name = '$item'");
                         }
                     }
                 }
             }
         }
     }
-    $status_c = mysqli_query($conn, "SELECT * from grn where grn_token = ");
-    $_SESSION['msg'] = '<span class="alert alert-success">GRN Received Successfully and Quantities balanced for each location.</span>';
-    header('Location: transfer.php');
+
+    $status_c = mysqli_query($conn, "UPDATE receive_grn set status = 1, approved_by = ".$_SESSION['id']." where receive_token = '$receive_token'");
+    $_SESSION['msg'] = '<span class="alert alert-success">Approved Successfully and Quantities balanced.</span>';
+    header('Location: item_movement.php');
     exit();
 }
 
@@ -164,7 +138,7 @@ $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                                 }
                                 ?>
                                 <div class="crcform">
-                                    <h4>Receive Items</h4>
+                                    <h4>Approve Items</h4>
                                     <form action="" method="post">
                                         <table class="table table-bordered" id="dynamic_field">
                                             <tr>
@@ -182,22 +156,17 @@ $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                                                     <?php
                                                     while ($grn = mysqli_fetch_array($g2)) {
                                                         $name = $grn['item_name'];
-                                                        $qty = $grn['quantity'] - $grn['quantity_received'];
+                                                        $qty = $grn['quantity_received'];
                                                     ?>
                                                     <div class="form-row field_wrapper">
                                                         <div class="col-md-4 mb-8">
                                                             <input type="text" class="form-control" name="item[]" readonly value="<?php echo $name; ?>" required="">
                                                         </div>
-                                                        <div class="col-md-2 mb-2">
-                                                            <input type="text" class="form-control" name="uom[]" readonly value="<?php echo $grn['uom']; ?>" required="">
-                                                        </div>
-                                                        <input type="hidden" name="grn_token" value="<?php echo $grn['grn_token']; ?>">
-                                                        <input type="hidden" name="db_quantity[]" value="<?php echo $grn['quantity']; ?>">
+                                                        <input type="hidden" name="receive_token" value="<?php echo $grn['receive_token']; ?>">
                                                         <input type="hidden" name="grn_id[]" value="<?php echo $grn['id']; ?>">
-                                                        <input type="hidden" name="sku[]" value="<?php echo $grn['item']; ?>">
+                                                        <input type="hidden" name="receive_type" value="<?php echo $grn['receive_type']; ?>">
                                                         <input type="hidden" name="from" value="<?php echo $grn['tfrom']; ?>">
                                                         <input type="hidden" name="to" value="<?php echo $grn['tto']; ?>">
-                                                        <input type="hidden" name="quantity_received[]" value="<?php echo $grn['quantity_received']; ?>">
                                                         <div class="col-md-2 mb-2">
                                                             <input type="text" class="form-control" name="quantity[]" value="<?php echo $qty; ?>" placeholder="Quantity Received" required="">
                                                         </div>
@@ -205,8 +174,7 @@ $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                                                             <input type="checkbox" class="" name="quantity">
                                                         </div> -->
                                                     </div>
-                                                    <?php } ?>(* change quantity to <b>0</b> for items you didnt receive)
-                                                </td>
+                                                    <?php } ?>
                                             </tr>
                                         </table>
                                         <input type="submit" name="process_grn" id="submit"  class="btn btn-info" value="Process" />

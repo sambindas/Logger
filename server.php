@@ -5,6 +5,14 @@ require 'connection.php';
 require 'functions.php';
 checkUserSession();
 
+$a = mysqli_query($conn, "SELECT * from access where user_id = ".$_SESSION['id']."");
+
+if (mysqli_num_rows($a) == 0) {
+    $_SESSION['msg'] = '<span class="alert alert-danger">You are not allowed to view that page.</span>';
+    header('Location: facility.php');
+    exit();
+}
+
 $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 
 $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -107,6 +115,8 @@ if (isset($_POST['submit_me'])) {
                                                     <option value="AnyDesk">AnyDesk</option>
                                                     <option value="Putty">Putty</option>
                                                     <option value="Server">Server </option>
+                                                    <option value="Online Instance">Online Instance </option>
+                                                    <option value="Local Instance">Local Instance </option>
                                                 </select>
                                                 <label for="">Username or ID (If Applicable)</label>
                                                 <input name="username" type="text" class="form-control" required="">
@@ -149,6 +159,8 @@ if (isset($_POST['submit_me'])) {
                                                             <option <?php if($ir['type'] == "AnyDesk") echo "SELECTED";?> value="AnyDesk">AnyDesk</option>
                                                             <option <?php if($ir['type'] == "Putty") echo "SELECTED";?> value="Putty">Putty</option>
                                                             <option <?php if($ir['type'] == "Server") echo "SELECTED";?> value="Server">Server </option>
+                                                            <option <?php if($ir['type'] == "Online Instance") echo "SELECTED";?> value="Online Instance">Online Instance</option>
+                                                            <option <?php if($ir['type'] == "Local Instance") echo "SELECTED";?> value="Local Instance">Local Instance </option>
                                                         </select>
                                                         <label for="">Username or ID (If Applicable)</label>
                                                         <input name="username" type="text" class="form-control" value="<?php echo $ir['username']; ?>" required="">
